@@ -19,12 +19,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 d-flex justify-content-between align-items-center">
                     <li class="nav-item">
                        <%
-//                           if (request.getSession().getAttribute("user_session") != null) {
-//                               String sessionName = request.getSession().getAttribute("user_session").toString();
-//                               String[] arr = sessionName.split(",");
-//                               String userName = arr[1];
-//                               out.print(userName);
-//                           }
+
                            if (request.getSession().getAttribute("user_session") != null) {
                                User user = (User) request.getSession().getAttribute("user_session");
                                out.print(user.getName());

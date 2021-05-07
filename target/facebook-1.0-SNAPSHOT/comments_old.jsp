@@ -33,7 +33,7 @@
             <div class="shadow p-3 mb-5 bg-body rounded">
                 <div class="row">
                     <div class="col-lg-1">
-                        <img class="profile-pic-icon-two" src="assets/images/avatar.png" alt="">
+                        <img class="profile-pic-icon-two" src="images/edema.jpeg" alt="">
                     </div>
                     <form action="<%=request.getContextPath()%>/post" method="post">
                         <input type="hidden" name="page" value="add">
@@ -54,7 +54,7 @@
                 if(posts.size() == 0){
             %><h4 style="text-align: center; color: #ffffff;">No Posts was made</h4><%
             }
-            for(Post post: posts){
+            for(int i=0; i<posts.size(); i++){
         %>
             <div id="section-one" class="shadow p-3 mb-5 bg-body rounded">
                 <div class="row">
@@ -64,22 +64,40 @@
                     <div class="col-lg-11">
                         <h5 class="postName">
                             <%
-                                User user1 = (new UserDAO().getUserById(post.getUser_id()));
+                                User user1 = (new UserDAO().getUserById(posts.get(i).getUser_id()));
+                                out.print(user1.getName());
                             %>
-                            <a href="<%=request.getContextPath()%>/comment?post_id=<%=post.getId()%>">
-                                <%= user1.getName() %>
-                            </a>
                         </h5>
                         <b>
 
                         </b>
-                        <h6 class="card-subtitle mb-2 text-muted"><%= post.getBody() %></h6>
-                        <p class="post-date"><%= post.getCreatedAt() %></p>
-                        <div>
-                            <a href="<%=request.getContextPath()%>/comment?post_id=<%=post.getUser_id()%>">
-                                Add Comments.
-                            </a>
-                        </div>
+                        <h6 class="card-subtitle mb-2 text-muted"><%= posts.get(i).getBody() %></h6>
+                        <p class="post-date"><%= posts.get(i).getCreatedAt() %></p>
+                        <form action="<%=request.getContextPath()%>/comment" method="post">
+                            <input type="hidden" name="post_id" value="<%= posts.get(i).getId() %>">
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <input type="text" name="body" class="form-control comment-form">
+                                </div>
+                                <div class="col-lg-2">
+                                    <button type="submit" class="btn btn-primary btn-sm btn-block">Comment</button>
+                                </div>
+                            </div>
+                        </form>
+                        <%
+                            CommentDAO commentDAO = new CommentDAO();
+                            ArrayList<Comment> comments = commentDAO.getCommentsByPostId(posts.get(i).getId());
+                            if (comments.size() == 0) {
+                                out.print("");
+                            }
+                            else {
+                                for(Comment comment: comments) {
+                        %>
+                        <p><%= comment.getBody() %></p>
+                        <%
+                                }
+                            }
+                        %>
 
                     </div>
 

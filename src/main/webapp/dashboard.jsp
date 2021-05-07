@@ -4,6 +4,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.michael.facebook.data_access_object.PostDAO" %>
 <%@ page import="com.michael.facebook.data_access_object.UserDAO" %>
+<%@ page import="com.michael.facebook.model.Comment" %>
+<%@ page import="com.michael.facebook.data_access_object.CommentDAO" %>
 <%@include file="includes/header.jsp"%>
 <%@include file="includes/nav.jsp"%>
 
@@ -12,9 +14,8 @@
     <div class="row">
         <div class="col-lg-3">
             <div class="shadow p-3 mb-5 bg-body rounded text-center">
-                <img class="profile-pic-icon-three mt-4" src="images/edema.jpeg" alt="">
+                <img class="profile-pic-icon-three mt-4" src="assets/images/avatar.png" alt="">
                 <h5 class="mt-3"><%
-
                     User user = null;
                     if (request.getSession().getAttribute("user_session") != null) {
                         user = (User) request.getSession().getAttribute("user_session");
@@ -32,7 +33,7 @@
             <div class="shadow p-3 mb-5 bg-body rounded">
                 <div class="row">
                     <div class="col-lg-1">
-                        <img class="profile-pic-icon-two" src="images/edema.jpeg" alt="">
+                        <img class="profile-pic-icon-two" src="assets/images/avatar.png" alt="">
                     </div>
                     <form action="<%=request.getContextPath()%>/post" method="post">
                         <input type="hidden" name="page" value="add">
@@ -53,7 +54,7 @@
                 if(posts.size() == 0){
             %><h4 style="text-align: center; color: #ffffff;">No Posts was made</h4><%
             }
-            for(int i=0; i<posts.size(); i++){
+            for(Post post: posts){
         %>
             <div id="section-one" class="shadow p-3 mb-5 bg-body rounded">
                 <div class="row">
@@ -63,45 +64,25 @@
                     <div class="col-lg-11">
                         <h5 class="postName">
                             <%
-                                User user1 = (new UserDAO().getUserById(posts.get(i).getUser_id()));
-                                out.print(user1.getName());
+                                User user1 = (new UserDAO().getUserById(post.getUser_id()));
                             %>
+                            <a href="<%=request.getContextPath()%>/comment?post_id=<%=post.getId()%>">
+                                <%= user1.getName() %>
+                            </a>
                         </h5>
                         <b>
 
                         </b>
-                        <h6 class="card-subtitle mb-2 text-muted"><%= posts.get(i).getBody() %></h6>
-                        <p class="post-date"><%= posts.get(i).getCreatedAt() %></p>
-                        <div class="">
-                            <form>
-                                <div class="row">
-                                    <div class="col-lg-10">
-                                        <input type="text" class="form-control comment-form">
-                                    </div>
-                                    <div class="col-lg-2">
-                                        <button type="submit" class="btn btn-primary btn-sm btn-block">Comment</button>
-                                    </div>
-                                </div>
-                            </form>
+                        <h6 class="card-subtitle mb-2 text-muted"><%= post.getBody() %></h6>
+                        <p class="post-date"><%= post.getCreatedAt() %></p>
+                        <div>
+                            <a href="<%=request.getContextPath()%>/comment?post_id=<%=post.getUser_id()%>">
+                                Add Comments.
+                            </a>
                         </div>
+
                     </div>
-                    <div class="row mt-3 text-center">
-                        <div class="col-lg-6">
-                            <div class="">
-<%--                                <%--%>
-<%--                                    LikeDAO ld = new LikeDAO(DBConnection.getInstance().getConnection());--%>
-<%--                                %>--%>
-                                <a href="#!"  class="btn btn-sm"> <i class="fa fa-thumbs-o-up"></i> <span class="like-counter">Like </span>  </a>
-                                <a href="#!" class="btn btn-sm"> <i class="fa fa-commenting-o"></i> <span>Comment</span>  </a>
-                                <%--                                    <button class="btn btn-light btn-sm" type="button"><span class="like-post">Like</span></button>--%>
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <div class="">
-                                <%--                                    <button class="btn btn-light btn-sm" type="button"><span class="like-post">Unlike</span></button>--%>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </div>
             <%
@@ -137,7 +118,6 @@
 </div>
 <footer class="text-center mt-5 mb-5">Java Book - 2021</footer>
 <script type="text/javascript">
-
     function removesection_one(){
         document.getElementById('section-one').remove();
     }
@@ -151,4 +131,3 @@
 
 
 <%@include file="/includes/footer.jsp" %>
-

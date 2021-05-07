@@ -47,4 +47,43 @@ public class PostDAO {
         return posts;
     }
 
+    public Post getPostById(int post_id) {
+        Post post = null;
+
+        try(Connection connection = DB.connect();
+            PreparedStatement preparedStatement = connection.prepareStatement("Select * from posts where id = ?");
+        ) {
+            preparedStatement.setInt(1, post_id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                int userId = resultSet.getInt("user_id");
+                String body = resultSet.getString("body");
+                Timestamp createdAt = resultSet.getTimestamp("created_at");
+                post = new Post(id, userId, body, createdAt);
+            }
+        }catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return post;
+    }
+
+    public boolean updatePost(int postId, String body)
+    {
+        boolean isUpdate = false;
+        try(Connection connection = DB.connect();
+        PreparedStatement preparedStatement = connection.prepareStatement("Update posts set body = ? where id = ?");)
+        {
+            preparedStatement.setString(1, body);
+            preparedStatement.setInt(2, postId);
+            preparedStatement.executeUpdate();
+            isUpdate = true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+
+        return isUpdate;
+    }
+
 }

@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter(filterName = "AuthenticationFilter", servletNames = {"DashboardServlet", "PostServlet"})
+@WebFilter(filterName = "AuthenticationFilter", servletNames = {"DashboardServlet", "PostServlet", "CommentServlet"})
 public class AuthenticationFilter implements Filter {
     public void init(FilterConfig config) throws ServletException {
     }

@@ -102,7 +102,6 @@ public class FrontEndServlet extends HttpServlet {
         request.getSession().invalidate();
         HttpSession session = request.getSession(true);
         session.setMaxInactiveInterval(10*60);
-//        session.setAttribute("user_session", user.getId() + "," + user.getName());
         session.setAttribute("user_session", user);
     }
 

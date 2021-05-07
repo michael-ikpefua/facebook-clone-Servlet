@@ -20,7 +20,9 @@ public class Post {
         this.user_id = user_id;
         this.body = body;
     }
-
+    public int getId() {
+        return id;
+    }
     public int getUser_id() {
         return user_id;
     }
