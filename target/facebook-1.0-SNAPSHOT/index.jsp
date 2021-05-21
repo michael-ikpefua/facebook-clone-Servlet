@@ -7,13 +7,20 @@
         <div class="col-lg-7">
 
             <img src="" alt="">
-            <h1 class="logo pb-2">JAVA Book</h1>
-            <h2 class="JavaFacebook mb-5">JAVA Book helps you connect and share <br> with Java Programmers.</h2>
+            <h1 class="logo pb-2">Face Book</h1>
+            <h2 class="JavaFacebook mb-5">Welcome to Michael Facebook Corporation.</h2>
         </div>
 
         <div class="col-lg-5">
 
             <div class="shadow p-3 mb-5 bg-body rounded">
+                <%
+                    if(request.getAttribute("no_user") != null) {
+                %>
+                <div id="e" class="form-text text-danger"><%= request.getAttribute("no_user").toString() %></div>
+                <%
+                    }
+                %>
 
                 <form action="<%= request.getContextPath() %>/front" method="post">
                     <input type="hidden" name="page" value="login">

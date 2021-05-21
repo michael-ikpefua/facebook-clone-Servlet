@@ -86,4 +86,18 @@ public class PostDAO {
         return isUpdate;
     }
 
+    public boolean deletePost(int postId) {
+        boolean isDelete = false;
+        try (Connection connection = DB.connect();
+        PreparedStatement preparedStatement = connection.prepareStatement("Delete from posts where id = ?");
+        ) {
+            preparedStatement.setInt(1, postId);
+            preparedStatement.executeUpdate();
+            isDelete = true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return isDelete;
+    }
+
 }

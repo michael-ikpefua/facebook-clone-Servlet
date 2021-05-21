@@ -1,6 +1,7 @@
 package com.michael.facebook.controller;
 
 import com.michael.facebook.data_access_object.CommentDAO;
+import com.michael.facebook.data_access_object.LikePostDAO;
 import com.michael.facebook.data_access_object.PostDAO;
 import com.michael.facebook.data_access_object.UserDAO;
 import com.michael.facebook.model.Comment;
@@ -18,12 +19,14 @@ public class CommentServlet extends HttpServlet {
     private CommentDAO commentDAO = null;
     private PostDAO postDAO = null;
     private UserDAO userDAO = null;
-    User authUser = null;
+    private User authUser = null;
+    LikePostDAO likePostDAO = null;
 
     public CommentServlet() {
         commentDAO = new CommentDAO();
         postDAO = new PostDAO();
         userDAO = new UserDAO();
+        likePostDAO = new LikePostDAO();
     }
 
     @Override
@@ -39,6 +42,7 @@ public class CommentServlet extends HttpServlet {
             request.setAttribute("user", userDAO.getUserById(post.getUser_id()));
             request.setAttribute("post", post);
             request.setAttribute("comments", commentDAO.getCommentsByPostId(postId));
+            request.setAttribute("totalLikes", likePostDAO.getTotalLikes(postId));
             request.getRequestDispatcher("comments.jsp").forward(request, response);
         }
     }
@@ -54,11 +58,11 @@ public class CommentServlet extends HttpServlet {
         CommentDAO commentDAO = new CommentDAO();
         boolean isCommentAdded = commentDAO.addComment(new Comment(authUserId, postId, body));
         if (!isCommentAdded) {
-            request.setAttribute("error", "Error adding comment");
-            request.getRequestDispatcher("dashboard.jsp");
+//            request.setAttribute("error", "Error adding comment");
+            response.sendRedirect(request.getContextPath()+"/comment?post_id="+postId);
+
         } else {
-            request.getSession().setAttribute("comment_success_message", "Comment Added to Post Successful");
-            response.sendRedirect(request.getContextPath()+"/dashboard");
+            response.sendRedirect(request.getContextPath()+"/comment?post_id="+postId+"&comment_success=true");
         }
 
     }

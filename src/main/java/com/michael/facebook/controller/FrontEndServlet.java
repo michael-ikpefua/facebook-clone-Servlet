@@ -32,6 +32,7 @@ public class FrontEndServlet extends HttpServlet {
                 request.getSession().invalidate();
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
             default:
+                request.getRequestDispatcher("/error.jsp").forward(request, response);
                 break;
         }
     }
@@ -88,6 +89,8 @@ public class FrontEndServlet extends HttpServlet {
             User user = userDAO.login(email, password);
 
             if (user == null) {
+                request.setAttribute("no_user", "Email or Password is wrong");
+                request.getRequestDispatcher("/index.jsp").forward(request, response);
 
             } else {
                 addSession(user, request);

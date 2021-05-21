@@ -1,5 +1,6 @@
 package com.michael.facebook.controller;
 
+import com.michael.facebook.data_access_object.LikePostDAO;
 import com.michael.facebook.data_access_object.PostDAO;
 import com.michael.facebook.model.Post;
 import com.michael.facebook.model.User;
@@ -34,6 +35,12 @@ public class PostServlet extends HttpServlet {
                 break;
             case "update_post":
                 updatePost(request, response);
+                break;
+
+            case "delete_post":
+                deletePost(request, response);
+                break;
+
             default:
                 break;
         }
@@ -45,7 +52,8 @@ public class PostServlet extends HttpServlet {
         boolean isError = false;
 
         if (body == null || body == "") {
-            request.setAttribute("bodyValidation", "field is required!");
+            response.getWriter().println("Post Field is Required, GO bck to provide it");
+            request.setAttribute("post_field", "field is required!");
             isError = true;
         } else {
 //            response.getWriter().println(user.getId());
@@ -63,21 +71,39 @@ public class PostServlet extends HttpServlet {
         String body = request.getParameter("body");
 
         if (body.equals("")) {
-            request.setAttribute("bodyValidation", "field is required!");
+            response.sendRedirect(request.getContextPath()+"/comment?post_id="+postId+"&invalid_field=true");
         } else if(authUser.getId() != postAuthorId) {
-            request.setAttribute("access_deny", "You dont have access to update this post");
+            response.getWriter().println("You dont have access to update this post");
         }
         else {
             boolean isUpdate = postDAO.updatePost(postId, body);
             if(!isUpdate) {
                 response.getWriter().println("Something went wrong in database");
             } else {
-                request.getSession().setAttribute("update_successful", "Post Updated Successful");
-                response.sendRedirect(request.getContextPath()+"/comment?post_id="+postId);
+                response.sendRedirect(request.getContextPath()+"/comment?post_id="+postId+"&post_success=true");
             }
         }
     }
 
+    protected void deletePost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int postId = Integer.parseInt(request.getParameter("post_id"));
+        int postAuthorId = Integer.parseInt(request.getParameter("post_user_id"));
+        User authenticatedUser = (User) request.getSession().getAttribute("user_session");
+
+        if (postAuthorId != authenticatedUser.getId()) {
+            response.getWriter().println("You dont have access to be delete this post because you are not the owner of the post");
+//            response.sendRedirect(request.getContextPath()+"/comment?post_id="+postId+"&deleted_denied=true");
+        } else {
+            boolean isDeleted = postDAO.deletePost(postId);
+            if (!isDeleted) {
+                response.sendRedirect(request.getContextPath()+"/comment?post_id="+postId+"&is_deleted=false");
+            } else {
+                response.sendRedirect(request.getContextPath()+"/dashboard?is_deleted=true");
+
+            }
+        }
+
+    }
 
     }
 
